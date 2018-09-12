@@ -1,3 +1,3 @@
 #coding=utf-8
 
-access_token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZGVudGl0eSI6Ijk5MjM0OTgzOUBxcS5jb20iLCJpYXQiOjE1MzY0ODI5NjgsIm5iZiI6MTUzNjQ4Mjk2OCwiZXhwIjoxNTM2NTI2MTY4fQ.IEmRkWstkGsuR9RYf16dIr3NWFhqAdXjcAuU_HW6N5U"
+access_token=""
