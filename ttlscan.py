@@ -38,7 +38,6 @@ def isIP(one_str):
 if __name__ == '__main__':
 	#准备工作
 	print_logo()
-	time.sleep(1)
 	ttlscanlogger.logger.info("{0} scan starting".format(time.time()))
 	#parser
 	parser=argparse.ArgumentParser(description="ttlscan help")
@@ -56,8 +55,8 @@ if __name__ == '__main__':
 		#是合法ip
 		if(isIP(ip)):
 			module=importlib.import_module('plugins.{}'.format(script))
-			if(module.POC(ip)):
-				ttlscanlogger.logger.error("[+]Vuln: {0} has found Redis access without limit".format(ip))
+			module.POC(ip)
+
 	#ip为空 输入源有可能是iplist或者search
 	else:
 		#如果iplist不为空
@@ -69,8 +68,8 @@ if __name__ == '__main__':
 				ip=ip.strip()
 				if(isIP(ip)):
 					module=importlib.import_module('plugins.{}'.format(script))
-					if(module.POC(ip)):
-						ttlscanlogger.logger.error("[+]Vuln: {0} has found Redis access without limit".format(ip))
+					module.POC(ip)
+						
 		else:
 			#如果是搜索引擎输入源
 			if not search==None:
