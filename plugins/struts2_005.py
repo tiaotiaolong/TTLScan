@@ -19,6 +19,7 @@ def POC(target_url):
         # print result
         if 'tiaotiaolong_005' in result:
             # print "发现一处struts漏洞，漏洞类型：struts2-055。漏洞地址为" + target_url
+            ttlscanlogger.logger.error("[+]Vuln: {0} has found Struts2_005 vulnerabillity ".format(target_url))
             return True
         # print result
         else:

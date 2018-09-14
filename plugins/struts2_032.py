@@ -4,8 +4,8 @@ from lib import ttlscanlogger
 
 def POC_INFO():
     dict_poc={};
-    dict_poc["name"]="Struts2_016 RCE"
-    dict_poc["Chinese_name"]="Struts2_016 远程命令执行漏洞"
+    dict_poc["name"]="Struts2_032 RCE"
+    dict_poc["Chinese_name"]="Struts2_032 远程命令执行漏洞"
     dict_poc["author"]="跳跳龙"
     return dict_poc
 
@@ -20,6 +20,7 @@ def struts_032(target_url):
         if 'tiaotiaolong_032' in result:
             if len(result) < 100:
                 # print "发现一处struts漏洞，漏洞类型：struts2-016。漏洞地址为" + target_url
+                ttlscanlogger.logger.error("[+]Vuln: {0} has found Struts2_032 vulnerabillity ".format(target_url))
                 return True
             # print result
             else:

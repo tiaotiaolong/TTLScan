@@ -10,14 +10,24 @@ def POC_INFO():
 	
 def POC(ip,port=6379):
 	try:
-		pool=redis.ConnectionPool(host=ip,port=port,decode_responses=True)
-		r=redis.Redis(connection_pool=pool)
-		if r:
-			r.set("abcdefgqwertyuiop","ABCDEFGQWERTYUIOP")
-			if(r.get("abcdefgqwertyuiop")=="ABCDEFGQWERTYUIOP"):
-				return True
-			else:
-				return False
+		#首先判断是否可访问
+		socket.setdefaulttimeout(2)
+		poc="\x2a\x31\x0d\x0a\x24\x34\x0d\x0a\x69\x6e\x66\x6f\x0d\x0a"
+		s=socket.socket()
+		s.connect((ip,port))
+		s.send(poc)
+		rec=s.recv(1024)
+		s.close()
+
+		if "redis" in rec:
+			pool=redis.ConnectionPool(host=ip,port=port,decode_responses=True)
+			r=redis.Redis(connection_pool=pool)
+			if r:
+				r.set("abcdefgqwertyuiop","ABCDEFGQWERTYUIOP")
+				if(r.get("abcdefgqwertyuiop")=="ABCDEFGQWERTYUIOP"):
+					return True
+				else:
+					return False
 	except:
 		return False
 
