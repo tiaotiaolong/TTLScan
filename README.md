@@ -26,6 +26,10 @@
 **eg**: Redis未授权访问，输入源就是ip方式 你可以使用--ip或者--ip_list两种参数
 其中--ip和--ip_list两者中--ip的优先级较高，如果同时使用了2种参数，则视为--ip_list无效
 
+**eg**: 查询目前的所有Poc脚本
+
+![](http://okzjjcktf.bkt.clouddn.com/logo4.png)
+
 **Will Do**
 
 - 将第三种输入源集成进来，对接Zoomeye。可以利用Zoomeye确定大量ip，并针对我们的Poc进行检测

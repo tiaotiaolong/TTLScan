@@ -7,7 +7,8 @@ from colorlog import ColoredFormatter
 import importlib
 import re
 from lib import ttlscanlogger
-
+import os
+from os import path
 #Logo
 def print_logo():
 	print '\033[0;31;40m'
@@ -35,7 +36,7 @@ def isIP(one_str):
 
 def scan_over(start_time):
 	over_time=time.time()
-	ttlscanlogger.logger.info("scan over during {}s".format(over_time-start_time))
+	ttlscanlogger.logger.info("程序本次用时 {}s".format(over_time-start_time))
 	exit(0)
 
 def scan_over_error():
@@ -48,7 +49,6 @@ if __name__ == '__main__':
 	#准备工作
 	print_logo()
 	start_time=time.time()
-	ttlscanlogger.logger.info("{0} scan starting".format(time.strftime("%a %b %d %H:%M:%S %Y", time.localtime()) ))
 	#parser
 	parser=argparse.ArgumentParser(description="ttlscan help")
 	parser.add_argument('--ip', type=str , help='ip to pentest')
@@ -57,11 +57,26 @@ if __name__ == '__main__':
 	parser.add_argument('--target_url_list',type=str, help="target url list")
 	parser.add_argument('--search', type=str, help='search engine to get ip')
 	parser.add_argument('--script', type=str , help='script you want test')
+	parser.add_argument('--query', type=str , help='eg: python ttlscan.py --query scripts')
 	#参数传递
 	args=parser.parse_args()
 	ip,ip_list,search,target_url,target_url_list,script=args.ip,args.ip_list,args.search,args.target_url,args.target_url_list,args.script
-	
+	query=args.query
+
 	#逻辑判断
+	#查询功能
+	if query=="scripts":
+		scripts_url_list=os.listdir(os.path.dirname(os.path.realpath(__file__))+"/plugins/url")
+		scripts_ip_list=os.listdir(os.path.dirname(os.path.realpath(__file__))+"/plugins/ip")
+		scripts_list=scripts_url_list+scripts_ip_list
+		temp=[]
+		for script in scripts_list:
+			if re.search('.py$',script) and 'init' not in script:
+				temp.append(script.split('.')[0])
+		ttlscanlogger.logger.info("scripts: {0}".format('    '.join(temp)))
+		scan_over(start_time)
+		
+	ttlscanlogger.logger.info("{0} scan starting".format(time.strftime("%a %b %d %H:%M:%S %Y", time.localtime()) ))
 	#基于IP
 	if not ip==None:
 		#是合法ip
