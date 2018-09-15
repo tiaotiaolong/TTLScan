@@ -4,56 +4,35 @@
 
 - 目前只支持ip iplist
 - 目前支持RedisUn RedisGetShell Struts2系列漏洞 
-- 后续添加Celery实现分布式调度
+- POC的准确性的已被复测
 - 后续添加ZoomEYE搜索引擎
+- 后续添加Celery实现分布式调度
 - To be Continued...
 
     
-```
+**截图**
 
- 20:20:08 | •100  tiaotiaolong  ttlscan 
-❱ python ttlscan.py --iplist ip.txt --script redis_un
+![](http://okzjjcktf.bkt.clouddn.com/logo.png)
 
-▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄  ▄▄          ▄▄▄▄
-▀▀▀██▀▀▀  ▀▀▀██▀▀▀  ██        ▄█▀▀▀▀█
-   ██        ██     ██        ██▄        ▄█████▄   ▄█████▄  ██▄████▄
-   ██        ██     ██         ▀████▄   ██▀    ▀   ▀ ▄▄▄██  ██▀   ██
-   ██        ██     ██             ▀██  ██        ▄██▀▀▀██  ██    ██     author:跳跳龙
-   ██        ██     ██▄▄▄▄▄▄  █▄▄▄▄▄█▀  ▀██▄▄▄▄█  ██▄▄▄███  ██    ██     code by 2018-09-09
-   ▀▀        ▀▀     ▀▀▀▀▀▀▀▀   ▀▀▀▀▀      ▀▀▀▀▀    ▀▀▀▀ ▀▀  ▀▀    ▀▀
+**使用说明**
+程序的整体设计是支持3种输入源，目前支持两种输入源分别为：
 
-Wed, 12 Sep 2018 20:24:43  ttlscan.py   1536755083.07 scan starting
-Wed, 12 Sep 2018 20:24:43  ttlscan.py   [+]Vuln: 127.0.0.1 has found Redis access without limit
-Wed, 12 Sep 2018 20:24:43  ttlscan.py   [+]Vuln: 10.211.55.8 has found Redis access without limit
+- ip方式
+- url方式
 
- 20:24:43 | •100  tiaotiaolong  ttlscan 
-❱ python ttlscan.py --ip 127.0.0.1  --script redis_un
+其中这两种都支持list形式 也就是文件列表格式。
+eg: Redis未授权访问，输入源就是ip方式 你可以使用--ip或者--ip_list两种参数
+其中--ip和--ip_list两者中--ip的优先级较高，如果同时使用了2种参数，则视为--ip_list无效
 
-▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄  ▄▄          ▄▄▄▄
-▀▀▀██▀▀▀  ▀▀▀██▀▀▀  ██        ▄█▀▀▀▀█
-   ██        ██     ██        ██▄        ▄█████▄   ▄█████▄  ██▄████▄
-   ██        ██     ██         ▀████▄   ██▀    ▀   ▀ ▄▄▄██  ██▀   ██
-   ██        ██     ██             ▀██  ██        ▄██▀▀▀██  ██    ██     author:跳跳龙
-   ██        ██     ██▄▄▄▄▄▄  █▄▄▄▄▄█▀  ▀██▄▄▄▄█  ██▄▄▄███  ██    ██     code by 2018-09-09
-   ▀▀        ▀▀     ▀▀▀▀▀▀▀▀   ▀▀▀▀▀      ▀▀▀▀▀    ▀▀▀▀ ▀▀  ▀▀    ▀▀
+**Will Do**
 
-Wed, 12 Sep 2018 20:24:57  ttlscan.py   1536755097.4 scan starting
-Wed, 12 Sep 2018 20:24:57  ttlscan.py   [+]Vuln: 127.0.0.1 has found Redis access without limit
+- 将第三种输入源集成进来，对接Zoomeye。可以利用Zoomeye确定大量ip，并针对我们的Poc进行检测
+- 当数量比较庞大的时候引入多线程以及协程相关技术
+- 对扫描的数据进行存储
+- Celery分布式任务处理
 
- 18:10:23 | •100  tiaotiaolong  TTLScan  G:  master   ⭑ - ? 
-❱ python ttlscan.py --target_url http://127.0.0.1/memocreate.action  --script struts2_032
 
-▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄  ▄▄          ▄▄▄▄
-▀▀▀██▀▀▀  ▀▀▀██▀▀▀  ██        ▄█▀▀▀▀█
-   ██        ██     ██        ██▄        ▄█████▄   ▄█████▄  ██▄████▄
-   ██        ██     ██         ▀████▄   ██▀    ▀   ▀ ▄▄▄██  ██▀   ██
-   ██        ██     ██             ▀██  ██        ▄██▀▀▀██  ██    ██     author:跳跳龙
-   ██        ██     ██▄▄▄▄▄▄  █▄▄▄▄▄█▀  ▀██▄▄▄▄█  ██▄▄▄███  ██    ██     scripts: 9
-   ▀▀        ▀▀     ▀▀▀▀▀▀▀▀   ▀▀▀▀▀      ▀▀▀▀▀    ▀▀▀▀ ▀▀  ▀▀    ▀▀     code by 2018-09-09
 
-Sat, 15 Sep 2018 18:12:43  ttlscan.py   Sat Sep 15 18:12:43 2018 scan starting
-Sat, 15 Sep 2018 18:12:44  struts2_032.py   [+]Vuln: http://127.0.0.1/memocreate.action has found Struts2_032 vulnerabillity
-Sat, 15 Sep 2018 18:12:44  ttlscan.py   scan over during 0.632119894028s
-```
+
 
 
