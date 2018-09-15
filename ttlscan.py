@@ -1,6 +1,5 @@
 #coding=utf-8
 import argparse
-from plugins import redis_poc
 import logging
 import time
 from logging.handlers import RotatingFileHandler
@@ -17,12 +16,12 @@ def print_logo():
 	print "   ██        ██     ██        ██▄        ▄█████▄   ▄█████▄  ██▄████▄"
 	print "   ██        ██     ██         ▀████▄   ██▀    ▀   ▀ ▄▄▄██  ██▀   ██"
 	print "   ██        ██     ██             ▀██  ██        ▄██▀▀▀██  ██    ██     author:跳跳龙"
-	print "   ██        ██     ██▄▄▄▄▄▄  █▄▄▄▄▄█▀  ▀██▄▄▄▄█  ██▄▄▄███  ██    ██     code by 2018-09-09"
-	print "   ▀▀        ▀▀     ▀▀▀▀▀▀▀▀   ▀▀▀▀▀      ▀▀▀▀▀    ▀▀▀▀ ▀▀  ▀▀    ▀▀"
+	print "   ██        ██     ██▄▄▄▄▄▄  █▄▄▄▄▄█▀  ▀██▄▄▄▄█  ██▄▄▄███  ██    ██     scripts: 9"
+	print "   ▀▀        ▀▀     ▀▀▀▀▀▀▀▀   ▀▀▀▀▀      ▀▀▀▀▀    ▀▀▀▀ ▀▀  ▀▀    ▀▀     code by 2018-09-09"
 	print '\033[0m'
 
-#判断字符串是否为ip
 
+#判断字符串是否为ip
 def isIP(one_str):
     '''
     正则匹配方法
@@ -34,50 +33,82 @@ def isIP(one_str):
     else:  
         return False 
 
+def scan_over(start_time):
+	over_time=time.time()
+	ttlscanlogger.logger.info("scan over during {}s".format(over_time-start_time))
+	exit(0)
+
+def scan_over_error():
+	ttlscanlogger.logger.info("输入源有误 程序自动退出")
+	exit(-1)
+
+
 
 if __name__ == '__main__':
 	#准备工作
 	print_logo()
-	ttlscanlogger.logger.info("{0} scan starting".format(time.time()))
+	start_time=time.time()
+	ttlscanlogger.logger.info("{0} scan starting".format(time.strftime("%a %b %d %H:%M:%S %Y", time.localtime()) ))
 	#parser
 	parser=argparse.ArgumentParser(description="ttlscan help")
 	parser.add_argument('--ip', type=str , help='ip to pentest')
-	parser.add_argument('--iplist', type=str , help='file contained ips')
+	parser.add_argument('--ip_list', type=str , help='file contained ips')
+	parser.add_argument('--target_url',type=str, help="target url")
+	parser.add_argument('--target_url_list',type=str, help="target url list")
 	parser.add_argument('--search', type=str, help='search engine to get ip')
 	parser.add_argument('--script', type=str , help='script you want test')
 	#参数传递
 	args=parser.parse_args()
-	ip,iplist,search,script=args.ip,args.iplist,args.search,args.script
+	ip,ip_list,search,target_url,target_url_list,script=args.ip,args.ip_list,args.search,args.target_url,args.target_url_list,args.script
 	
 	#逻辑判断
-	#如果ip不为空 输入源为ip参数
+	#基于IP
 	if not ip==None:
 		#是合法ip
 		if(isIP(ip)):
-			module=importlib.import_module('plugins.{}'.format(script))
+			#动态调用
+			module=importlib.import_module('plugins.ip.{}'.format(script))
 			module.POC(ip)
+			#Over
+			scan_over(start_time)
+			
+	#基于IPLIST
+	if not ip_list==None:
+		with open(ip_list,'r') as f:
+				ip_list_temp=f.readlines()
 
-	#ip为空 输入源有可能是iplist或者search
+		for ip in ip_list_temp:
+			ip=ip.strip()
+			if(isIP(ip)):
+				module=importlib.import_module('plugins.ip.{}'.format(script))
+				module.POC(ip)
+		scan_over(start_time)
+
+	#基于第三方搜索引擎
+	if not search==None:
+		pass
+		exit(0)
+
+	#基于URL
+	if not target_url==None:
+		module=importlib.import_module('plugins.url.{}'.format(script))
+		module.POC(target_url)
+		scan_over(start_time)
+
+	#基于URLLIST
+	if not target_url_list==None:
+		with open(target_url_list,'r') as f:
+				url_list_temp=f.readlines()
+		for url in url_list_temp:
+			url=url.strip()
+			module=importlib.import_module('plugins.url.{}'.format(script))
+			module.POC(target_url)
+		scan_over(start_time)
+
+	#输入源有误
 	else:
-		#如果iplist不为空
-		if not iplist==None:
-			with open(iplist,'r') as f:
-				ip_list=f.readlines()
-
-			for ip in ip_list:
-				ip=ip.strip()
-				if(isIP(ip)):
-					module=importlib.import_module('plugins.{}'.format(script))
-					module.POC(ip)
-						
-		else:
-			#如果是搜索引擎输入源
-			if not search==None:
-				pass
-			#输入源有误
-			else:
-				ttlscanlogger.logger.info("输入源有误 程序自动退出")
-				exit(-1)
+		scan_over_error()
+		
 
 
 
