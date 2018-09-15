@@ -7,6 +7,7 @@
 - POC的准确性的已被复测
 - 后续添加ZoomEYE搜索引擎
 - 后续添加Celery实现分布式调度
+- 希望大家一起来提交Poc 一起来修改框架
 - To be Continued...
 
     
@@ -29,6 +30,44 @@
 **eg**: 查询目前的所有Poc脚本
 
 ![](http://okzjjcktf.bkt.clouddn.com/logo4.png)
+
+**POC的格式**
+poc的格式非常简单，主要是2个函数被动态调用 POC()和POC_INFO()两个函数被动态调用，当检测到有漏洞的时候可以使用logger进行日志输出。
+**eg：** **redis_un** script
+
+```
+import redis
+import socket
+from lib import ttlscanlogger
+
+def POC_INFO():
+	dict_poc={};
+	dict_poc["name"]="Redis Access Without Limit"
+	dict_poc["Chinese_name"]="Redis未授权访问"
+	dict_poc["author"]="qi.tao"
+	dict_poc["port"]=6379
+	return dict_poc
+	
+def POC(ip,port=6379):
+	try:
+		socket.setdefaulttimeout(2)
+		poc="\x2a\x31\x0d\x0a\x24\x34\x0d\x0a\x69\x6e\x66\x6f\x0d\x0a"
+		s=socket.socket()
+		s.connect((ip,port))
+		s.send(poc)
+		rec=s.recv(1024)
+		s.close()
+		if "redis" in rec:
+			ttlscanlogger.logger.error("[+]Vuln: {0} has found Redis access without limit".format(ip))
+			return True
+		else:
+			return False
+	except:
+		return False
+
+if __name__ == '__main__':
+	print POC()
+```
 
 **Will Do**
 
