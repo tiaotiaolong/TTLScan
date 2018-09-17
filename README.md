@@ -1,4 +1,7 @@
 # TTLScan
+
+[![Python3](https://img.shields.io/badge/python-3.6-green.svg?style=plastic)](https://www.python.org/)
+
 **一款插件化的漏洞扫描器框架**
 
 
