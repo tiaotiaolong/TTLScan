@@ -7,8 +7,11 @@ from colorlog import ColoredFormatter
 import importlib
 import re
 from lib import ttlscanlogger
+from lib import parser_zoomeye
 import os
 from os import path
+import requests
+from config import config
 #Logo
 def print_logo():
 	print('\033[0;31;40m')
@@ -44,7 +47,6 @@ def scan_over_error():
 	exit(-1)
 
 
-
 if __name__ == '__main__':
 	#准备工作
 	print_logo()
@@ -56,11 +58,12 @@ if __name__ == '__main__':
 	parser.add_argument('--target_url',type=str, help="target url")
 	parser.add_argument('--target_url_list',type=str, help="target url list")
 	parser.add_argument('--search', type=str, help='search engine to get ip')
+	parser.add_argument('--search_page', type=str, help='pages to search default 20pages')
 	parser.add_argument('--script', type=str , help='script you want test')
 	parser.add_argument('--query', type=str , help='eg: python ttlscan.py --query scripts')
 	#参数传递
 	args=parser.parse_args()
-	ip,ip_list,search,target_url,target_url_list,script=args.ip,args.ip_list,args.search,args.target_url,args.target_url_list,args.script
+	ip,ip_list,search,target_url,target_url_list,script,search_page=args.ip,args.ip_list,args.search,args.target_url,args.target_url_list,args.script,args.search_page
 	query=args.query
 
 	#逻辑判断
@@ -92,16 +95,48 @@ if __name__ == '__main__':
 		with open(ip_list,'r') as f:
 				ip_list_temp=f.readlines()
 
+		module=importlib.import_module('plugins.ip.{}'.format(script))
 		for ip in ip_list_temp:
 			ip=ip.strip()
 			if(isIP(ip)):
-				module=importlib.import_module('plugins.ip.{}'.format(script))
+				
 				module.POC(ip)
 		scan_over(start_time)
 
 	#基于第三方搜索引擎
 	if not search==None:
-		pass
+		#如果是zoomeye搜索引擎
+		if search.strip()=="zoomeye":
+			#搜索页数默认值为50
+			if search_page==None:
+				search_page=20
+			else:
+				search_page=int(search_page)
+
+			#通过script获取搜索信息:
+			module=importlib.import_module('plugins.ip.{}'.format(script))
+			poc_info=module.POC_INFO()
+			#获取端口搜索信息
+			script_port=poc_info['port']
+
+			#声明ip列表集合
+			ip_from_pages_list=[]
+
+			#对pages进行深度遍历 形成ip列表
+			for page in range(search_page):
+				response=requests.get(url=config.zoomeye_search_api.format("port:"+str(script_port),str(search_page)),headers=config.headers)
+				#获取目标IP集合
+				object_ip_temp_list=parser_zoomeye.parser(response.text)
+				ip_from_pages_list+=object_ip_temp_list
+
+			#对IP进行探测
+			for ip in ip_from_pages_list:
+				ip=ip.strip()
+				if(isIP(ip)):
+					print(ip)
+					module.POC(ip)
+			scan_over(start_time)
+
 		exit(0)
 
 	#基于URL
@@ -114,9 +149,11 @@ if __name__ == '__main__':
 	if not target_url_list==None:
 		with open(target_url_list,'r') as f:
 				url_list_temp=f.readlines()
+
+		module=importlib.import_module('plugins.url.{}'.format(script))
 		for url in url_list_temp:
 			url=url.strip()
-			module=importlib.import_module('plugins.url.{}'.format(script))
+			
 			module.POC(target_url)
 		scan_over(start_time)
 

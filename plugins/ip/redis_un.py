@@ -1,3 +1,4 @@
+#coding=utf-8
 import redis
 import socket
 from lib import ttlscanlogger
@@ -13,13 +14,13 @@ def POC_INFO():
 def POC(ip,port=6379):
 	try:
 		socket.setdefaulttimeout(2)
-		poc=b"\x2a\x31\x0d\x0a\x24\x34\x0d\x0a\x69\x6e\x66\x6f\x0d\x0a"
+		poc="\x2a\x31\x0d\x0a\x24\x34\x0d\x0a\x69\x6e\x66\x6f\x0d\x0a"
 		s=socket.socket()
 		s.connect((ip,port))
 		s.send(poc)
 		rec=s.recv(1024)
 		s.close()
-		if "redis" in rec.decode():
+		if "redis" in rec:
 			ttlscanlogger.logger.error("[+]Vuln: {0} has found Redis access without limit".format(ip))
 			return True
 		else:

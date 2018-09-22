@@ -2,14 +2,16 @@
 
 [![Python3](https://img.shields.io/badge/python-3.6-green.svg?style=plastic)](https://www.python.org/)
 
+
+
+
 **一款插件化的漏洞扫描器框架**
 
 
-- 目前只支持ip iplist
+- 目前支持ip iplist zoomeye搜索引擎 url urllist
 - 目前支持RedisUn RedisGetShell Struts2系列漏洞 
 - POC的准确性的已被复测
-- 后续添加ZoomEYE搜索引擎
-- 后续添加Celery实现分布式调度
+- 已经支持ZoomEYE搜索引擎自动获取ip系列POC的目标集合
 - 希望大家一起来提交Poc 一起来修改框架
 - To be Continued...
 
@@ -40,6 +42,7 @@ poc的格式非常简单，主要是2个函数被动态调用 POC()和POC_INFO()
 **eg：** **redis_un** script
 
 ```
+#coding=utf-8
 import redis
 import socket
 from lib import ttlscanlogger
@@ -70,8 +73,56 @@ def POC(ip,port=6379):
 		return False
 
 if __name__ == '__main__':
-	print POC()
+	print(POC())
 ```
+
+**搜索引擎的使用方法 --search**
+
+--search支持zoomeye搜索引擎，可以对ip系列的POC进行目标集合获取
+--search_page 为获取的页数 默认为20页
+
+**eg：** 
+下图命令为利用zoomeye搜索引擎对redis未授权访问进行探测 默认只对有漏洞的ip进行日志输出，图中为了显示zoomeye搜索引擎目标集合，对整个集合进行了输出。
+![](http://okzjjcktf.bkt.clouddn.com/logo5.png)
+
+**zoomeye的设置和使用**
+
+**zoomeye官方提供了api允许我们使用，这里我已经做了集成。但仍需相关配置项 access_token
+获取zoomeye access_token的方法如下：**
+
+平台主要使用的是 Json Web Token 的登录验证方式，用户只需使用用户名和密码，登录一次，获取 access_token。
+
+并在接下来的其他 API 请求 HTTP 头中带上 access_token (格式如 Authorization: JWT <access_token>) 即可，无需再次登录验证。
+
+获取access_token示例
+
+```
+curl -X POST https://api.zoomeye.org/user/login -d
+'{
+    "username": "foo@bar.com",
+    "password": "foobar"
+}'
+{"access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZGVudGl0eSI6MSwiaWF0IjoxNDU1NzE4NDcwLCJuYmYiOjE0N... ..."}
+
+```
+
+**将获取的access_token添加到config.config.py中的access_token**
+
+```
+#coding=utf-8
+#Zoomeye Token
+access_token=""
+
+#Zoomeye Search API
+zoomeye_search_api="https://api.zoomeye.org/host/search?query={0}&page={1}"
+
+#Zoomeye Headers
+headers={
+	"Authorization":"JWT "+access_token
+}
+```
+更多相关Zoomeye的使用方法和文档情操考zoomeye官方 
+[ZoomEye API 参考手册](https://www.zoomeye.org/api#parameters)
 
 **Will Do**
 
