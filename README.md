@@ -83,6 +83,7 @@ if __name__ == '__main__':
 
 **eg：** 
 下图命令为利用zoomeye搜索引擎对redis未授权访问进行探测 默认只对有漏洞的ip进行日志输出，图中为了显示zoomeye搜索引擎目标集合，对整个集合进行了输出。
+
 ![](http://okzjjcktf.bkt.clouddn.com/logo5.png)
 
 **zoomeye的设置和使用**
@@ -126,7 +127,7 @@ headers={
 
 **Will Do**
 
-- 将第三种输入源集成进来，对接Zoomeye。可以利用Zoomeye确定大量ip，并针对我们的Poc进行检测
+- 添加其他的搜索引擎
 - 当数量比较庞大的时候引入多线程以及协程相关技术
 - 对扫描的数据进行存储
 - Celery分布式任务处理
